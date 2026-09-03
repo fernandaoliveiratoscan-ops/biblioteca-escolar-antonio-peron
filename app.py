@@ -51,6 +51,7 @@ def iniciar_banco():
         con.commit()
 
     finally:
+    if con:
         con.close()
 
 @app.route("/")
@@ -80,20 +81,56 @@ def livros():
     con.close()
     return render_template("livros.html", livros=dados, busca=busca)
 
-@app.route("/livros/novo", methods=["GET","POST"])
+@app.route("/livros/novo", methods=["GET", "POST"])
 def novo_livro():
+
     if request.method == "POST":
+
+        con = None
+
         try:
             q = int(request.form["quantidade"])
+
             con = conectar()
-            con.execute("""INSERT INTO livros(codigo,titulo,autor,categoria,quantidade,disponivel)
-                VALUES(?,?,?,?,?,?)""", (request.form["codigo"],request.form["titulo"],
-                request.form["autor"],request.form["categoria"],q,q))
-            con.commit(); con.close()
+
+            con.execute(
+                """INSERT INTO livros(
+                    codigo,
+                    titulo,
+                    autor,
+                    categoria,
+                    quantidade,
+                    disponivel
+                ) VALUES (?, ?, ?, ?, ?, ?)""",
+                (
+                    request.form["codigo"],
+                    request.form["titulo"],
+                    request.form["autor"],
+                    request.form["categoria"],
+                    q,
+                    q
+                )
+            )
+
+            con.commit()
+
             flash("Livro cadastrado com sucesso!")
+
             return redirect(url_for("livros"))
+
         except sqlite3.IntegrityError:
+
             flash("Este código de livro já está cadastrado.")
+
+        except Exception as erro:
+
+            flash(f"Erro ao cadastrar o livro: {erro}")
+
+        finally:
+
+            if con:
+                con.close()
+
     return render_template("novo_livro.html")
 
 @app.route("/livros/excluir/<int:id>", methods=["POST"])
