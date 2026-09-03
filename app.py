@@ -8,32 +8,50 @@ app.secret_key = "biblioteca-escolar-antonio-peron"
 DB = Path("biblioteca.db")
 
 def conectar():
-    con = sqlite3.connect(DB)
+    con = sqlite3.connect(DB, timeout=30)
     con.row_factory = sqlite3.Row
+    con.execute("PRAGMA busy_timeout = 30000")
     return con
 
 def iniciar_banco():
     con = conectar()
-    con.execute("""CREATE TABLE IF NOT EXISTS livros (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        codigo TEXT UNIQUE NOT NULL, titulo TEXT NOT NULL,
-        autor TEXT, categoria TEXT,
-        quantidade INTEGER NOT NULL, disponivel INTEGER NOT NULL
-    )""")
-    con.execute("""CREATE TABLE IF NOT EXISTS alunos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        matricula TEXT UNIQUE NOT NULL, nome TEXT NOT NULL, turma TEXT
-    )""")
-    con.execute("""CREATE TABLE IF NOT EXISTS emprestimos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        aluno_id INTEGER NOT NULL, livro_id INTEGER NOT NULL,
-        data_emprestimo TEXT NOT NULL, data_prevista TEXT NOT NULL,
-        data_devolucao TEXT, status TEXT NOT NULL DEFAULT 'Em andamento',
-        FOREIGN KEY(aluno_id) REFERENCES alunos(id),
-        FOREIGN KEY(livro_id) REFERENCES livros(id)
-    )""")
-    con.commit()
-    con.close()
+
+    try:
+        con.execute("PRAGMA journal_mode=WAL")
+
+        con.execute("""CREATE TABLE IF NOT EXISTS livros (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            codigo TEXT UNIQUE NOT NULL,
+            titulo TEXT NOT NULL,
+            autor TEXT,
+            categoria TEXT,
+            quantidade INTEGER NOT NULL,
+            disponivel INTEGER NOT NULL
+        )""")
+
+        con.execute("""CREATE TABLE IF NOT EXISTS alunos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            matricula TEXT UNIQUE NOT NULL,
+            nome TEXT NOT NULL,
+            turma TEXT
+        )""")
+
+        con.execute("""CREATE TABLE IF NOT EXISTS emprestimos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            aluno_id INTEGER NOT NULL,
+            livro_id INTEGER NOT NULL,
+            data_emprestimo TEXT NOT NULL,
+            data_prevista TEXT NOT NULL,
+            data_devolucao TEXT,
+            status TEXT NOT NULL DEFAULT 'Em andamento',
+            FOREIGN KEY(aluno_id) REFERENCES alunos(id),
+            FOREIGN KEY(livro_id) REFERENCES livros(id)
+        )""")
+
+        con.commit()
+
+    finally:
+        con.close()
 
 @app.route("/")
 def inicio():
@@ -99,16 +117,44 @@ def alunos():
     con.close()
     return render_template("alunos.html", alunos=dados, busca=busca)
 
-@app.route("/alunos/novo", methods=["GET","POST"])
+@app.route("/alunos/novo", methods=["GET", "POST"])
 def novo_aluno():
-    if request.method=="POST":
+
+    if request.method == "POST":
+
+        con = None
+
         try:
-            con=conectar()
-            con.execute("INSERT INTO alunos(matricula,nome,turma) VALUES(?,?,?)",
-                        (request.form["matricula"],request.form["nome"],request.form["turma"]))
-            con.commit(); con.close(); flash("Aluno cadastrado com sucesso!")
+            con = conectar()
+
+            con.execute(
+                "INSERT INTO alunos(matricula, nome, turma) VALUES (?, ?, ?)",
+                (
+                    request.form["matricula"],
+                    request.form["nome"],
+                    request.form["turma"]
+                )
+            )
+
+            con.commit()
+
+            flash("Aluno cadastrado com sucesso!")
+
             return redirect(url_for("alunos"))
-        except sqlite3.IntegrityError: flash("Esta matrícula já está cadastrada.")
+
+        except sqlite3.IntegrityError:
+
+            flash("Esta matrícula já está cadastrada.")
+
+        except sqlite3.OperationalError as erro:
+
+            flash(f"Erro no banco de dados: {erro}")
+
+        finally:
+
+            if con:
+                con.close()
+
     return render_template("novo_aluno.html")
 
 @app.route("/alunos/excluir/<int:id>", methods=["POST"])
