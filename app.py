@@ -173,5 +173,5 @@ def relatorios():
     return render_template("relatorios.html",mais=mais,atrasados=atrasados)
 
 if __name__=="__main__":
-    iniciar_banco()
+    iniciar_banco() if __name__ == "__main__":
     app.run(debug=True)
