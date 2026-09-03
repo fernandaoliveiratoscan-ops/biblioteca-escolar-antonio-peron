@@ -171,7 +171,8 @@ def relatorios():
         WHERE e.status='Em andamento' AND e.data_prevista < ? ORDER BY e.data_prevista""",(date.today().isoformat(),)).fetchall()
     con.close()
     return render_template("relatorios.html",mais=mais,atrasados=atrasados)
+iniciar_banco()
 
-if __name__=="__main__":
-    iniciar_banco() if __name__ == "__main__":
+if __name__ == "__main__":
     app.run(debug=True)
+
