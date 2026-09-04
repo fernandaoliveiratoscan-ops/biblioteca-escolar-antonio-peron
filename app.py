@@ -3,7 +3,12 @@ import sqlite3
 from pathlib import Path
 from datetime import date
 
-app = Flask(__name__, template_folder=".", static_folder=".")
+app = Flask(
+    __name__,
+    template_folder=".",
+    static_folder=".",
+    static_url_path="/static"
+)
 app.secret_key = "biblioteca-escolar-antonio-peron"
 DB = Path("biblioteca.db")
 
