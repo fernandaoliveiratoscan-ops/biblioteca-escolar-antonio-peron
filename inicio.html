@@ -1,1 +1,102 @@
-{% extends "base.html" %}{% block content %}<h1>Olá! 👋</h1><div class="subtitle">Bem-vindo à Biblioteca Escolar</div><div class="cards"><div class="card"><span>📚 Títulos cadastrados</span><div class="number">{{total}}</div></div><div class="card"><span>✅ Disponíveis</span><div class="number">{{disponiveis}}</div></div><div class="card"><span>📤 Empréstimos ativos</span><div class="number">{{emprestados}}</div></div><div class="card"><span>⚠️ Atrasados</span><div class="number">{{atrasados}}</div></div></div><div class="panel"><h2>Empréstimos recentes</h2><table><tr><th>Aluno</th><th>Livro</th><th>Data</th><th>Status</th></tr>{% for e in recentes %}<tr><td>{{e.aluno}}</td><td>{{e.livro}}</td><td>{{e.data_emprestimo}}</td><td>{{e.status}}</td></tr>{% else %}<tr><td colspan="4">Nenhum empréstimo registrado.</td></tr>{% endfor %}</table></div>{% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="boas-vindas">
+
+    <h1>Olá! 👋</h1>
+    <p>Bem-vindo à Biblioteca Escolar</p>
+
+</section>
+
+
+<div class="cards">
+
+    <div class="card">
+        <div class="icone">📚</div>
+        <div>
+            <span>Títulos cadastrados</span>
+            <strong>{{ total }}</strong>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="icone">✅</div>
+        <div>
+            <span>Livros disponíveis</span>
+            <strong>{{ disponiveis }}</strong>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="icone">📤</div>
+        <div>
+            <span>Empréstimos ativos</span>
+            <strong>{{ emprestados }}</strong>
+        </div>
+    </div>
+
+
+    <div class="card alerta">
+        <div class="icone">⚠️</div>
+        <div>
+            <span>Empréstimos atrasados</span>
+            <strong>{{ atrasados }}</strong>
+        </div>
+    </div>
+
+</div>
+
+
+<h2 class="titulo-secao">📋 Empréstimos recentes</h2>
+
+
+<div class="tabela-container">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Aluno</th>
+                <th>Livro</th>
+                <th>Data</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for emprestimo in recentes %}
+
+            <tr>
+                <td>{{ emprestimo.aluno }}</td>
+                <td>{{ emprestimo.livro }}</td>
+                <td>{{ emprestimo.data_emprestimo }}</td>
+                <td>
+                    {% if emprestimo.status == "Devolvido" %}
+                        <span class="status devolvido">Devolvido</span>
+                    {% else %}
+                        <span class="status ativo">Em andamento</span>
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% else %}
+
+            <tr>
+                <td colspan="4" class="vazio">
+                    Nenhum empréstimo registrado.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
