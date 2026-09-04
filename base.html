@@ -1,1 +1,65 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Biblioteca Escolar</title><link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"></head><body><div class="container"><aside class="sidebar"><div class="logo">📚 BIBLIOTECA ESCOLAR<small>Escola Municipal Professor Antonio Peron</small></div><nav class="menu"><a href="{{ url_for('inicio') }}">🏠 Início</a><a href="{{ url_for('livros') }}">📚 Livros</a><a href="{{ url_for('alunos') }}">👨‍🎓 Alunos</a><a href="{{ url_for('emprestimos') }}">📤 Empréstimos</a><a href="{{ url_for('devolucoes') }}">📥 Devoluções</a><a href="{{ url_for('relatorios') }}">📊 Relatórios</a></nav></aside><main class="content">{% with messages=get_flashed_messages() %}{% if messages %}{% for m in messages %}<div class="flash">{{m}}</div>{% endfor %}{% endif %}{% endwith %}{% block content %}{% endblock %}</main></div></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Biblioteca Escolar</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+
+        <div class="logo">
+            📚
+        </div>
+
+        <div class="titulo">
+            <h1>BIBLIOTECA ESCOLAR</h1>
+            <span>Escola Municipal Professor Antonio Peron</span>
+        </div>
+
+    </header>
+
+    <nav>
+
+        <a href="{{ url_for('inicio') }}">🏠 Início</a>
+
+        <a href="{{ url_for('livros') }}">📚 Livros</a>
+
+        <a href="{{ url_for('alunos') }}">👨‍🎓 Alunos</a>
+
+        <a href="{{ url_for('emprestimos') }}">📤 Empréstimos</a>
+
+        <a href="{{ url_for('devolucoes') }}">📥 Devoluções</a>
+
+        <a href="{{ url_for('relatorios') }}">📊 Relatórios</a>
+
+    </nav>
+
+    <main>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+
+                    <div class="mensagem">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+</body>
+
+</html>
