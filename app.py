@@ -167,26 +167,28 @@ def novo_aluno():
 
     if request.method == "POST":
 
+        matricula = request.form.get("matricula", "").strip()
+        nome = request.form.get("nome", "").strip()
+        turma = request.form.get("turma", "").strip()
+
+        print("DADOS RECEBIDOS:")
+        print("Matrícula:", matricula)
+        print("Nome:", nome)
+        print("Turma:", turma)
+
+        if not matricula or not nome:
+            flash("Preencha a matrícula e o nome do aluno.")
+            return render_template("novo_aluno.html")
+
         con = None
 
         try:
-            matricula = request.form.get("matricula", "").strip()
-            nome = request.form.get("nome", "").strip()
-            turma = request.form.get("turma", "").strip()
-
-            if not matricula or not nome:
-                flash("Preencha a matrícula e o nome do aluno.")
-                return render_template("novo_aluno.html")
-
             con = conectar()
 
-            con.execute(
-                """
+            con.execute("""
                 INSERT INTO alunos (matricula, nome, turma)
                 VALUES (?, ?, ?)
-                """,
-                (matricula, nome, turma)
-            )
+            """, (matricula, nome, turma))
 
             con.commit()
 
@@ -194,9 +196,9 @@ def novo_aluno():
 
             return redirect(url_for("alunos"))
 
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as erro:
 
-            flash("Esta matrícula já está cadastrada.")
+            flash(f"Erro: esta matrícula já está cadastrada. {erro}")
 
         except Exception as erro:
 
