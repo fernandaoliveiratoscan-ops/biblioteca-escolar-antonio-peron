@@ -14,45 +14,53 @@ def conectar():
     return con
 
 def iniciar_banco():
-    con = conectar()
+    con = None
 
     try:
+        con = conectar()
+
         con.execute("PRAGMA journal_mode=WAL")
 
-        con.execute("""CREATE TABLE IF NOT EXISTS livros (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            codigo TEXT UNIQUE NOT NULL,
-            titulo TEXT NOT NULL,
-            autor TEXT,
-            categoria TEXT,
-            quantidade INTEGER NOT NULL,
-            disponivel INTEGER NOT NULL
-        )""")
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS livros (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                codigo TEXT UNIQUE NOT NULL,
+                titulo TEXT NOT NULL,
+                autor TEXT,
+                categoria TEXT,
+                quantidade INTEGER NOT NULL,
+                disponivel INTEGER NOT NULL
+            )
+        """)
 
-        con.execute("""CREATE TABLE IF NOT EXISTS alunos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            matricula TEXT UNIQUE NOT NULL,
-            nome TEXT NOT NULL,
-            turma TEXT
-        )""")
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS alunos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                matricula TEXT UNIQUE NOT NULL,
+                nome TEXT NOT NULL,
+                turma TEXT
+            )
+        """)
 
-        con.execute("""CREATE TABLE IF NOT EXISTS emprestimos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            aluno_id INTEGER NOT NULL,
-            livro_id INTEGER NOT NULL,
-            data_emprestimo TEXT NOT NULL,
-            data_prevista TEXT NOT NULL,
-            data_devolucao TEXT,
-            status TEXT NOT NULL DEFAULT 'Em andamento',
-            FOREIGN KEY(aluno_id) REFERENCES alunos(id),
-            FOREIGN KEY(livro_id) REFERENCES livros(id)
-        )""")
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS emprestimos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                aluno_id INTEGER NOT NULL,
+                livro_id INTEGER NOT NULL,
+                data_emprestimo TEXT NOT NULL,
+                data_prevista TEXT NOT NULL,
+                data_devolucao TEXT,
+                status TEXT NOT NULL DEFAULT 'Em andamento',
+                FOREIGN KEY(aluno_id) REFERENCES alunos(id),
+                FOREIGN KEY(livro_id) REFERENCES livros(id)
+            )
+        """)
 
         con.commit()
 
     finally:
-    if con:
-        con.close()
+        if con:
+            con.close()
 
 @app.route("/")
 def inicio():
@@ -162,15 +170,22 @@ def novo_aluno():
         con = None
 
         try:
+            matricula = request.form.get("matricula", "").strip()
+            nome = request.form.get("nome", "").strip()
+            turma = request.form.get("turma", "").strip()
+
+            if not matricula or not nome:
+                flash("Preencha a matrícula e o nome do aluno.")
+                return render_template("novo_aluno.html")
+
             con = conectar()
 
             con.execute(
-                "INSERT INTO alunos(matricula, nome, turma) VALUES (?, ?, ?)",
-                (
-                    request.form["matricula"],
-                    request.form["nome"],
-                    request.form["turma"]
-                )
+                """
+                INSERT INTO alunos (matricula, nome, turma)
+                VALUES (?, ?, ?)
+                """,
+                (matricula, nome, turma)
             )
 
             con.commit()
@@ -183,9 +198,9 @@ def novo_aluno():
 
             flash("Esta matrícula já está cadastrada.")
 
-        except sqlite3.OperationalError as erro:
+        except Exception as erro:
 
-            flash(f"Erro no banco de dados: {erro}")
+            flash(f"Erro ao cadastrar o aluno: {erro}")
 
         finally:
 
