@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 from pathlib import Path
+import os
+
+PASTA_APP = Path(os.path.dirname(os.path.abspath(__file__)))
+DB = PASTA_APP / "biblioteca.db"
 from datetime import date
 
 app = Flask(
@@ -13,9 +17,8 @@ app.secret_key = "biblioteca-escolar-antonio-peron"
 DB = Path("biblioteca.db")
 
 def conectar():
-    con = sqlite3.connect(DB, timeout=30)
+    con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
-    con.execute("PRAGMA busy_timeout = 30000")
     return con
 
 def iniciar_banco():
