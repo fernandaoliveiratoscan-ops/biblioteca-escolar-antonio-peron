@@ -1,1 +1,161 @@
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#1e293b}.container{display:flex;min-height:100vh}.sidebar{width:245px;background:#14263d;color:white;padding:28px 18px}.logo{font-size:20px;font-weight:bold;line-height:1.35;margin-bottom:38px}.logo small{display:block;font-size:12px;font-weight:normal;color:#cbd5e1;margin-top:10px}.menu a{display:block;color:#dbeafe;text-decoration:none;padding:14px;border-radius:8px;margin:6px 0}.menu a:hover{background:#2563b8;color:#fff}.content{flex:1;padding:35px;overflow:auto}h1{margin:0 0 8px}.subtitle{color:#64748b;margin-bottom:28px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}.card,.panel,.form{background:white;border-radius:12px;padding:22px;box-shadow:0 2px 10px #00000010}.card span{color:#64748b}.number{font-size:30px;font-weight:bold;color:#1d4ed8;margin-top:12px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.btn{background:#2563b8;color:#fff;border:0;border-radius:7px;padding:11px 16px;text-decoration:none;cursor:pointer;font-size:14px}.btn-danger{background:#dc2626}.btn-green{background:#15803d}.search,input,select{padding:11px;border:1px solid #cbd5e1;border-radius:7px;font-size:15px;width:100%}.search{max-width:330px}table{width:100%;border-collapse:collapse}th,td{padding:13px;text-align:left;border-bottom:1px solid #e5e7eb}th{color:#64748b;font-size:13px}.form{max-width:680px}.form label{display:block;font-weight:bold;margin:14px 0 6px}.actions{display:flex;gap:8px;align-items:center}.flash{background:#dcfce7;color:#166534;padding:12px 15px;border-radius:8px;margin-bottom:20px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.status{font-weight:bold}.late{color:#dc2626}@media(max-width:900px){.sidebar{width:75px;padding:18px 8px}.logo{font-size:0}.logo:first-letter{font-size:24px}.logo small{display:none}.menu a{font-size:0;text-align:center}.menu a:first-letter{font-size:20px}.content{padding:20px}.cards,.grid2{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:stretch;gap:12px}}
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+/* CABEÇALHO */
+
+header {
+    background-color: #1f4e78;
+    color: white;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 42px;
+}
+
+.titulo h1 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.titulo span {
+    font-size: 15px;
+}
+
+/* MENU */
+
+nav {
+    background-color: #163a59;
+    padding: 12px 40px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-right: 25px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #ffd166;
+}
+
+/* CONTEÚDO */
+
+main {
+    max-width: 1200px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+/* TÍTULOS */
+
+h1,
+h2 {
+    color: #1f4e78;
+}
+
+/* MENSAGENS */
+
+.mensagem {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+/* FORMULÁRIOS */
+
+input,
+select {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin: 5px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* BOTÕES */
+
+button {
+    background-color: #1f4e78;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #163a59;
+}
+
+/* TABELAS */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th {
+    background-color: #1f4e78;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* LINKS */
+
+a {
+    color: #1f4e78;
+}
+
+@media (max-width: 700px) {
+
+    header {
+        padding: 15px;
+    }
+
+    nav {
+        padding: 15px;
+    }
+
+    nav a {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    main {
+        margin: 15px;
+        padding: 20px;
+    }
+
+}
