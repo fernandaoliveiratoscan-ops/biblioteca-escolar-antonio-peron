@@ -2,10 +2,13 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 from pathlib import Path
 import os
-
-PASTA_APP = Path(os.path.dirname(os.path.abspath(__file__)))
-DB = PASTA_APP / "biblioteca.db"
 from datetime import date
+
+# PASTA FIXA DO APLICATIVO
+PASTA_APP = Path(__file__).resolve().parent
+
+# BANCO DE DADOS FIXO
+DB = PASTA_APP / "biblioteca.db"
 
 app = Flask(
     __name__,
@@ -13,11 +16,12 @@ app = Flask(
     static_folder=".",
     static_url_path="/static"
 )
+
 app.secret_key = "biblioteca-escolar-antonio-peron"
-DB = Path("biblioteca.db")
+
 
 def conectar():
-    con = sqlite3.connect(DB)
+    con = sqlite3.connect(str(DB))
     con.row_factory = sqlite3.Row
     return con
 
