@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+    <h2>✏️ Alterar Turma do Aluno</h2>
+
+    <p>
+        <strong>Aluno:</strong> {{ aluno.nome }}
+    </p>
+
+    <p>
+        <strong>Matrícula:</strong> {{ aluno.matricula }}
+    </p>
+
+    <form method="POST">
+
+        <label>Turma atual:</label>
+
+        <input
+            type="text"
+            value="{{ aluno.turma }}"
+            disabled
+        >
+
+        <br><br>
+
+        <label>Nova turma:</label>
+
+        <input
+            type="text"
+            name="turma"
+            value="{{ aluno.turma }}"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">
+            💾 Salvar alteração
+        </button>
+
+        <a href="{{ url_for('alunos') }}">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}
