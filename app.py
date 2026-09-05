@@ -236,6 +236,98 @@ def novo_aluno():
 
     return render_template("novo_aluno.html")
 
+# ==========================================
+# ALTERAR TURMA DE UM ALUNO INDIVIDUALMENTE
+# ==========================================
+
+@app.route("/alunos/editar/<int:id>", methods=["GET", "POST"])
+def editar_aluno(id):
+
+    con = conectar()
+
+    aluno = con.execute(
+        "SELECT * FROM alunos WHERE id=?",
+        (id,)
+    ).fetchone()
+
+    if not aluno:
+        con.close()
+        flash("Aluno não encontrado.")
+        return redirect(url_for("alunos"))
+
+    if request.method == "POST":
+
+        nova_turma = request.form.get("turma", "").strip()
+
+        if not nova_turma:
+            con.close()
+            flash("Informe a nova turma.")
+            return redirect(url_for("editar_aluno", id=id))
+
+        con.execute(
+            "UPDATE alunos SET turma=? WHERE id=?",
+            (nova_turma, id)
+        )
+
+        con.commit()
+        con.close()
+
+        flash("Turma do aluno alterada com sucesso!")
+        return redirect(url_for("alunos"))
+
+    con.close()
+
+    return render_template(
+        "editar_aluno.html",
+        aluno=aluno
+    )
+
+
+# ==========================================
+# PROMOVER UMA TURMA DE UMA SÓ VEZ
+# ==========================================
+
+@app.route("/alunos/promover", methods=["GET", "POST"])
+def promover_alunos():
+
+    con = conectar()
+
+    if request.method == "POST":
+
+        turma_atual = request.form.get("turma_atual", "").strip()
+        nova_turma = request.form.get("nova_turma", "").strip()
+
+        if not turma_atual or not nova_turma:
+            con.close()
+            flash("Informe a turma atual e a nova turma.")
+            return redirect(url_for("promover_alunos"))
+
+        con.execute(
+            "UPDATE alunos SET turma=? WHERE turma=?",
+            (nova_turma, turma_atual)
+        )
+
+        con.commit()
+        con.close()
+
+        flash(
+            f"Todos os alunos da turma {turma_atual} foram atualizados para {nova_turma}!"
+        )
+
+        return redirect(url_for("alunos"))
+
+    turmas = con.execute(
+        "SELECT DISTINCT turma FROM alunos "
+        "WHERE turma IS NOT NULL AND turma != '' "
+        "ORDER BY turma"
+    ).fetchall()
+
+    con.close()
+
+    return render_template(
+        "promover_alunos.html",
+        turmas=turmas
+    )
 @app.route("/alunos/excluir/<int:id>", methods=["POST"])
 def excluir_aluno(id):
     con=conectar()
