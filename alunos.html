@@ -1,1 +1,118 @@
-{% extends "base.html" %}{% block content %}<div class="topbar"><div><h1>Alunos</h1><div class="subtitle">Cadastre e gerencie os estudantes</div></div><a class="btn" href="{{url_for('novo_aluno')}}">+ Adicionar aluno</a></div><form method="get" class="topbar"><input class="search" name="busca" value="{{busca}}" placeholder="🔎 Pesquisar aluno"><button class="btn">Pesquisar</button></form><div class="panel"><table><tr><th>Matrícula</th><th>Nome</th><th>Turma</th><th>Ação</th></tr>{% for a in alunos %}<tr><td>{{a.matricula}}</td><td>{{a.nome}}</td><td>{{a.turma}}</td><td><form method="post" action="{{url_for('excluir_aluno',id=a.id)}}"><button class="btn btn-danger">Excluir</button></form></td></tr>{% else %}<tr><td colspan="4">Nenhum aluno encontrado.</td></tr>{% endfor %}</table></div>{% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="topbar">
+    <div>
+        <h1>Alunos</h1>
+        <div class="subtitle">Cadastre e gerencie os estudantes</div>
+    </div>
+
+    <div>
+        <a class="btn" href="{{ url_for('novo_aluno') }}">
+            + Novo Aluno
+        </a>
+
+        <a class="btn" href="{{ url_for('promover_alunos') }}">
+            🚀 Promover Alunos
+        </a>
+    </div>
+</div>
+
+<div class="card">
+
+    <form method="GET" action="{{ url_for('alunos') }}">
+
+        <input
+            type="text"
+            name="busca"
+            value="{{ busca }}"
+            placeholder="Pesquisar por nome, matrícula ou turma"
+        >
+
+        <button type="submit">
+            🔍 Pesquisar
+        </button>
+
+        {% if busca %}
+        <a href="{{ url_for('alunos') }}">
+            Limpar busca
+        </a>
+        {% endif %}
+
+    </form>
+
+</div>
+
+<div class="card">
+
+    <h2>Lista de Alunos</h2>
+
+    {% if alunos %}
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Matrícula</th>
+                <th>Nome</th>
+                <th>Turma</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for aluno in alunos %}
+
+            <tr>
+
+                <td>{{ aluno.matricula }}</td>
+
+                <td>{{ aluno.nome }}</td>
+
+                <td>{{ aluno.turma }}</td>
+
+                <td>
+
+                    <a
+                        class="btn"
+                        href="{{ url_for('editar_aluno', id=aluno.id) }}"
+                    >
+                        ✏️ Alterar Turma
+                    </a>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('excluir_aluno', id=aluno.id) }}"
+                        style="display:inline;"
+                    >
+
+                        <button
+                            type="submit"
+                            onclick="return confirm('Deseja realmente excluir este aluno?')"
+                        >
+                            🗑️ Excluir
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <p>Nenhum aluno encontrado.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
