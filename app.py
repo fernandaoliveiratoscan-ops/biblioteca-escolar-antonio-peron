@@ -1,14 +1,25 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 from pathlib import Path
-import os
 from datetime import date
+import os
 
-# PASTA FIXA DO APLICATIVO
-PASTA_APP = Path(__file__).resolve().parent
+# ==========================================
+# BANCO DE DADOS PERMANENTE
+# ==========================================
 
-# BANCO DE DADOS FIXO
-DB = PASTA_APP / "biblioteca.db"
+PASTA_DADOS = Path.home() / "BibliotecaEscolar"
+
+# Cria a pasta caso ela ainda não exista
+PASTA_DADOS.mkdir(parents=True, exist_ok=True)
+
+# Caminho permanente do banco de dados
+DB = PASTA_DADOS / "biblioteca.db"
+
+print("=" * 50)
+print("BANCO DE DADOS:", DB)
+print("=" * 50)
+
 
 app = Flask(
     __name__,
@@ -275,16 +286,40 @@ def registrar_devolucao(id):
 
 @app.route("/relatorios")
 def relatorios():
-    con=conectar()
-    mais=con.execute("""SELECT l.titulo,COUNT(*) total FROM emprestimos e JOIN livros l ON l.id=e.livro_id
-        GROUP BY l.id ORDER BY total DESC LIMIT 10""").fetchall()
-    atrasados=con.execute("""SELECT a.nome aluno,l.titulo livro,e.data_prevista FROM emprestimos e
-        JOIN alunos a ON a.id=e.aluno_id JOIN livros l ON l.id=e.livro_id
-        WHERE e.status='Em andamento' AND e.data_prevista < ? ORDER BY e.data_prevista""",(date.today().isoformat(),)).fetchall()
+    con = conectar()
+
+    mais = con.execute("""
+        SELECT l.titulo, COUNT(*) total
+        FROM emprestimos e
+        JOIN livros l ON l.id = e.livro_id
+        GROUP BY l.id
+        ORDER BY total DESC
+        LIMIT 10
+    """).fetchall()
+
+    atrasados = con.execute("""
+        SELECT a.nome aluno, l.titulo livro, e.data_prevista
+        FROM emprestimos e
+        JOIN alunos a ON a.id = e.aluno_id
+        JOIN livros l ON l.id = e.livro_id
+        WHERE e.status='Em andamento'
+        AND e.data_prevista < ?
+        ORDER BY e.data_prevista
+    """, (date.today().isoformat(),)).fetchall()
+
     con.close()
-    return render_template("relatorios.html",mais=mais,atrasados=atrasados)
-iniciar_banco()
+
+    return render_template(
+        "relatorios.html",
+        mais=mais,
+        atrasados=atrasados
+    )
+
+
+# ==========================================
+# INICIAR APLICATIVO
+# ==========================================
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
+    iniciar_banco()
+    app.run(debug=False)
