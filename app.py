@@ -84,6 +84,8 @@ def iniciar_banco():
     finally:
         if con:
             con.close()
+# Inicializa o banco de dados e cria as tabelas
+iniciar_banco()
 
 @app.route("/")
 def inicio():
@@ -321,5 +323,4 @@ def relatorios():
 # ==========================================
 
 if __name__ == "__main__":
-    iniciar_banco()
     app.run(debug=False)
