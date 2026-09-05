@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+    <h2>🚀 Promover Alunos</h2>
+
+    <p>
+        Utilize esta opção para alterar a turma de vários alunos ao mesmo tempo.
+    </p>
+
+    <form method="POST">
+
+        <label>Turma atual:</label>
+
+        <select name="turma_atual" required>
+
+            <option value="">
+                Selecione a turma
+            </option>
+
+            {% for turma in turmas %}
+
+            <option value="{{ turma.turma }}">
+                {{ turma.turma }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label>Nova turma:</label>
+
+        <input
+            type="text"
+            name="nova_turma"
+            placeholder="Exemplo: 2º Ano A"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">
+            🚀 Atualizar turma
+        </button>
+
+        <a href="{{ url_for('alunos') }}">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}
